@@ -1,0 +1,367 @@
+# ----------------------------------------------------
+#
+# I would have loved to enter the syllables/morae in a "traditional"
+# order, but since these are regex patterns that are evaluated in the
+# order below. If (a: あ) was the first translation, all a-morae 
+# (e.g. か, さ, etc.) would be destroyed.
+#
+# ----------------------------------------------------
+
+# hiragana
+
+name: hiragana
+
+rules:
+
+
+  # a double vowel ee/oo are treated as ei/ou
+  - (?<=e)e: い
+  - (?<=o)o: う
+  # ... unless escaped (with ONE \ , the second one is there for regex)
+  - \\e: え
+  - \\o: お
+
+  # a double consonant after a vowel
+  - (?<=[aiueo])([bcdfghjkmnprstwyz])(?=\1): っ
+  
+  - " ": "　"  # replace normal spaces with fullwidth / 'ideographic' spaces
+  - (?<!\.|\\)\.(?!\.): 。  # replace single/unescaped dots...
+  - (?<!\,|\\)\,(?!\,): 、  # ...and commas with the ideographic variants
+  
+  - \\\.: '.'
+  - \\,: ','
+
+
+  - ka: か
+  - ki: き
+  - ku: く
+  - ke: け
+  - ko: こ
+
+  - sa: さ
+  - sh?i: し
+  - su: す
+  - se: せ
+  - so: そ
+
+  - ta: た
+  - (t|ch)i: ち
+  - ts?u: つ
+  - te: て
+  - to: と
+
+  - na: な
+  - ni: に
+  - nu: ぬ
+  - ne: ね
+  - "no": の
+
+  - fu: ふ
+
+  - ma: ま
+  - mi: み
+  - mu: む
+  - me: め
+  - mo: も
+
+  - ra: ら
+  - ri: り
+  - ru: る
+  - re: れ
+  - ro: ろ
+
+  - wa: わ
+  - wo: を
+
+  - ga: が
+  - gi: ぎ
+  - gu: ぐ
+  - ge: げ
+  - go: ご
+
+  - za: ざ
+  - zi: じ
+  - ze: ぜ
+  - zo: ぞ
+
+  - da: だ
+  - dj?i: ぢ
+  - d?zu: づ
+  - de: で
+  - do: ど
+
+  - ba: ば
+  - bi: び
+  - bu: ぶ
+  - be: べ
+  - bo: ぼ
+
+  - pa: ぱ
+  - pi: ぴ
+  - pu: ぷ
+  - pe: ぺ
+  - po: ぽ
+
+  - kya: きゃ
+  - kyu: きゅ
+  - kyo: きょ
+
+  - s(y|h)a: しゃ
+  - s(y|h)u: しゅ
+  - s(y|h)o: しょ
+
+  - (ty|ch)a: ちゃ
+  - (ty|ch)u: ちゅ
+  - (ty|ch)o: ちょ
+
+  - hya: ひゃ
+  - hyu: ひゅ
+  - hyo: ひょ
+
+  - mya: みゃ
+  - myu: みゅ 
+  - myo: みょ
+
+  - rya: りゃ
+  - ryu: りゅ
+  - ryo: りょ
+
+  - gya: ぎゃ
+  - gyu: ぎゅ
+  - gyo: ぎょ
+
+  - (zy|j)a: じゃ
+  - (zy|j)u: じゅ
+  - (zy|j)o: じょ
+
+  - dja: ぢゃ
+  - dju: ぢゅ
+  - djo: ぢょ
+
+  - bya: びゃ
+  - byu: びゅ
+  - byo: びょ
+
+  - pya: ぴゃ
+  - pyu: ぴゅ
+  - pyo: ぴょ
+
+  - ha: は
+  - hi: ひ
+  - hu: ふ  # already matched with 'fu'
+  - he: へ
+  - ho: ほ
+
+  - zu: ず
+  - ji: じ  # already matched with 'zi'
+
+  # problematic; can't be differentiated from ん + [や  ゆ  よ]  =>  space required
+  - nya: にゃ
+  - nyu: にゅ
+  - nyo: にょ
+
+  - ya: や
+  - yu: ゆ
+  - yo: よ
+  
+  - "n": ん
+
+  - a: あ
+  - i: い
+  - u: う
+  - e: え
+  - o: お
+# ------------
+--- # KATAKANA
+# ------------
+
+name: katakana
+
+rules:
+  - " ": "　"  # replace normal spaces with fullwidth / 'ideographic' spaces
+
+  - (?<=[aiueo])([bcdfghjklmnprstvwyz])(?=\1): ッ
+  - (?<=([aiueo]))(\1)|(?<=o)u|(?<=e)i|-: ー
+
+  - ka: カ
+  - ki: キ
+  - ku: ク
+  - ke: ケ
+  - ko: コ
+
+  - ta: タ
+  - chi: チ
+  - tsu: ツ
+  - te: テ
+  - to: ト
+
+  - na: ナ
+  - ni: ニ
+  - nu: ヌ
+  - ne: ネ
+  - "no": ノ
+
+  - ma: マ
+  - mi: ミ
+  - mu: ム
+  - me: メ
+  - mo: モ
+
+  - ra: ラ
+  - ri: リ
+  - ru: ル
+  - re: レ
+  - ro: ロ
+
+  - ga: ガ
+  - gi: ギ
+  - gu: グ
+  - ge: ゲ
+  - go: ゴ
+
+  - za: ザ
+  - (j|z)i: ジ
+  - zu: ズ
+  - ze: ゼ
+  - zo: ゾ
+
+  - da: ダ
+  - dji: ヂ
+  - dzu: ヅ
+  - de: デ
+  - do: ド
+
+  - ba: バ
+  - bi: ビ
+  - bu: ブ
+  - be: ベ
+  - bo: ボ
+
+  - pa: パ
+  - pi: ピ
+  - pu: プ
+  - pe: ペ
+  - po: ポ
+
+  - kya: キャ
+  - kyu: キュ
+  - kyo: キョ
+
+  - s(h|y)a: シャ
+  - s(h|y)u: シュ
+  - s(h|y)o: ショ
+
+  - (ch|ty)a: チャ
+  - (ch|ty)u: チュ
+  - (ch|ty)o: チョ
+
+  - hya: ヒャ
+  - hyu: ヒュ
+  - hyo: ヒョ
+
+  - mya: ミャ
+  - myu: ミュ
+  - myo: ミョ
+
+  - rya: リャ
+  - ryu: リュ
+  - ryo: リョ
+
+  - gya: ギャ
+  - gyu: ギュ
+  - gyo: ギョ
+
+  - dja: ヂャ
+  - dju: ヂュ
+  - djo: ヂョ
+
+  - bya: ビャ
+  - byu: ビュ
+  - byo: ビョ
+
+  - pya: ピャ
+  - pyu: ピュ
+  - pyo: ピョ
+
+  - she: シェ
+
+  - je: ジェ
+
+  - ti: ティ
+  - tu: トゥ
+
+  - che: チェ
+
+  - tsa: ツァ
+  - tsi: ツィ
+  - tse: ツェ
+  - tso: ツォ
+
+  - di: ディ
+  - du: ドゥ
+
+  - fa: ファ
+  - fi: フィ
+  - fe: フェ
+  - fo: フォ
+
+  - ye: イェ
+
+  - wi: ウィ
+  - we: ウェ
+
+  - va: ヴァ
+  - vi: ヴィ
+  - vu: ヴ
+  - ve: ヴェ
+  - vo: ヴォ
+
+  - tyu: テュ
+  - dyu: デュ
+
+  - fyu: フュ
+
+  - vyu: ヴュ
+
+  - kwa: クァ
+  - kwi: クィ
+  - kwe: クェ
+  - kwo: クォ
+
+  - gwa: グァ
+  
+  - (j|zy)a: ジャ
+  - (j|zy)u: ジュ
+  - (j|zy)o: ジョ
+  
+  - wa: ワ
+  - wo: ヲ
+
+  - sa: サ
+  - sh?i: シ
+  - su: ス
+  - se: セ
+  - so: ソ
+
+  - ha: ハ
+  - hi: ヒ
+  - (h|f)u: フ
+  - he: ヘ
+  - ho: ホ
+
+  # problematic; can't be differentiated from ン + [ヤ  ユ  ヨ]  =>  space required
+  - nya: ニャ
+  - nyu: ニュ
+  - nyo: ニョ
+  
+  - ya: ヤ
+  - yu: ユ
+  - yo: ヨ
+
+  - a: ア
+  - i: イ
+  - u: ウ
+  - e: エ
+  - o: オ
+
+  - "n": ン
