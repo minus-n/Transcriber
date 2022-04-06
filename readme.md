@@ -20,3 +20,6 @@ rules:
 # next rule
 ```
 
+## Copyright...
+
+For the image 'loading.gif' see: [giphy.com](https://giphy.com/gifs/2d-splash-dot-PWFLIuyQb5bv96WiTj)
