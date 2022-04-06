@@ -6,9 +6,22 @@ from PyQt5 import uic
 import sys
 from time import sleep
 import functools
+import logging
+from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL, log
+from traceback import format_exception
+
 
 from load import load
 from parse_text import parse_text
+
+
+logging.basicConfig(
+        filename='logs.log',
+        filemode='a',
+        # datefmt='%Y-%m-%d %H:%M:%S (%z)',
+        format='[%(asctime)s] %(levelno)s-%(levelname)s: %(message)s',
+        level=INFO
+)
 
 
 def transcr_to_select_action(names: Iterable[str], parent: 'TranscribeWindow') -> list[QAction]:
@@ -65,32 +78,46 @@ class Transcriber(QObject):
  
     @pyqtSlot()
     def __call__(self):
-        while not self.exit_requested:
-            if self.transcription_requested:
-                self.transcription_requested = False
-                if not self.transcription_type:
-                    self.new_transcription_available.emit(
-                        self.text_to_transcribe
-                    )
-                else:
-                    self.new_transcription_available.emit(
-                        parse_text(self.text_to_transcribe, self.transcription_table, self.transcription_type)
-                    )
-                    self.user_msg.emit(f'transcription ({self.transcription_type}) finished')
-            elif self.rel_transcr_table_requested:
-                self.rel_transcr_table_requested = False
-                self.transcription_table = load(self.transcription_file)
-                self.parent_window.update_transcription()
-                self.user_msg.emit('reloading conversion table finished.')
-                if self.transcription_type not in self.transcription_types:
-                    try:
-                        self.transcription_type = self.transcription_types[0]
-                    except IndexError:
-                        self.transcription_type = ''
+        log(INFO, 'transcriber job started')
+        try:
+            while not self.exit_requested:
+                self.handle_requests()
+                sleep(0.05)
+        except Exception as err:
+            log(CRITICAL, f'an error occured in transcription job: {"".join(format_exception(err))}')
+            raise
+        log(INFO, 'transcriber job exited regularly')
 
-            sleep(0.05)
+    def handle_requests(self):
+        if self.transcription_requested:
+            self.transcription_requested = False
+            self.handle_transcription()
+
+        elif self.rel_transcr_table_requested:
+            self.rel_transcr_table_requested = False
+            self.handle_reload_transcription_table()
+            
         
+    def handle_transcription(self):
+        if not self.transcription_type:
+            self.new_transcription_available.emit(
+                self.text_to_transcribe
+            )
+        else:
+            self.new_transcription_available.emit(
+                parse_text(self.text_to_transcribe, self.transcription_table, self.transcription_type)
+            )
+            self.user_msg.emit(f'transcription ({self.transcription_type}) finished')
 
+    def handle_reload_transcription_table(self):
+        self.transcription_table = load(self.transcription_file)
+        self.parent_window.update_transcription()
+        self.user_msg.emit('reloading conversion table finished.')
+        if self.transcription_type not in self.transcription_types:
+            try:
+                self.transcription_type = self.transcription_types[0]
+            except IndexError:
+                self.transcription_type = None
 
 
 class TranscribeWindow(QMainWindow):
@@ -163,7 +190,14 @@ class TranscribeWindow(QMainWindow):
         super(QMainWindow, self).closeEvent(event)
 
 
+log(INFO, 'program initializing')
 app = QApplication(sys.argv)
 w = TranscribeWindow()
 w.show()
-app.exec()
+log(INFO, 'initialization finished')
+try:
+    app.exec()
+except Exception as err:
+    log(CRITICAL, f'an error occured: {"".join(format_exception(err))}')
+    raise
+log(INFO, 'program exited regularly')
