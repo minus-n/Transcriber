@@ -58,7 +58,7 @@ class TranscribeWindow(QMainWindow):
         self._transcr_job_running = False
         self._threadpool = QThreadPool(self)
         self._transcr_job = Transcriber(ruleset)
-        self.current_ruleset = ruleset
+        self._current_ruleset = ruleset
         self._start_transcr_job()
 
         # connect listeners
@@ -75,6 +75,7 @@ class TranscribeWindow(QMainWindow):
         # store actions that trigger the current rulesets
         self.actions_select_ruleset: OrderedDict[str, QAction] = \
                 OrderedDict()
+        self._fill_rulesets_menu()
 
     def show_msg(self, msg: str, hold: int) -> None:
         """Shows a message to the user for ~at~least~ 'hold' milliseconds."""
@@ -91,7 +92,7 @@ class TranscribeWindow(QMainWindow):
     def reload_rulesets(self) -> None:
         """Forwards the reload of the ruleset to 
         the transcription job."""
-        self._transcr_job.load_ruleset(self.current_ruleset)
+        self._transcr_job.load_ruleset(self._current_ruleset)
         self._clear_rulesets_menu()
         self._fill_rulesets_menu()
 
