@@ -4,11 +4,15 @@ try:  # only load with base loader for security reasons
 except ImportError:
     from yaml import BaseLoader as YAMLLoader 
 
-from collections import namedtuple
 import re
 
 # the result of load_rules
-Rulesets = namedtuple('Rulesets', ('names', 'sets'))
+class Rulesets(dict):
+    @property
+    def names(self):
+        """The names of the rules."""
+        return sorted(self.keys())
+
 
 # a set of rules (typing)
 Ruleset = list[tuple[re.Pattern, str]]
@@ -20,10 +24,13 @@ def load_rules(file: str | int) -> Rulesets:
     with open(file, 'rt', encoding='utf-8') as f:
         raw_yaml = yaml.load_all(f.read(), YAMLLoader)
 
-    parsed = {}
+    parsed = Rulesets()
     unnamed = 0
 
     for ruleset in raw_yaml:
+        if not 'rules' in ruleset:
+            continue
+
         if 'name' in ruleset:
             name = ruleset['name']
         else:
@@ -37,10 +44,7 @@ def load_rules(file: str | int) -> Rulesets:
 
         parsed[name] = rules
         
-    return Rulesets(
-        sorted(parsed.keys()),  # make all the names accessable as rulesets.name
-        parsed
-    )
+    return parsed
 
 
 def parse_text(text: str, rules: Ruleset): 

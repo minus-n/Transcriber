@@ -26,7 +26,7 @@ class Transcriber(QObject):
         self._transcribe_text = ''
 
         # store the currently loaded rulesets & the selected one
-        self._rulesets = Rulesets([], {})
+        self._rulesets = Rulesets()
         self._curr_ruleset = ''
 
         # store exit requests
@@ -69,7 +69,7 @@ class Transcriber(QObject):
         """If the given ruleset is available, select it.
         If not, raise an error."""
         
-        if new_rlst not in self._rulesets.names:
+        if new_rlst not in self._rulesets:
             raise ValueError('The given ruleset name is not among the loaded ones.')
 
         self._curr_ruleset = new_rlst
@@ -104,11 +104,11 @@ class Transcriber(QObject):
     
     def _transcribe(self, text):
         # apply the currently selected ruleset to the given string
-        ruleset = self._rulesets.sets[self._curr_ruleset]
+        ruleset = self._rulesets[self._curr_ruleset]
         return parse_text(text, ruleset)
 
     def _select_valid_ruleset(self):
         # select a ruleset from self._rulesets
         # (so no wrong one is selected)
-        if (self.rulesets) and (self._curr_ruleset not in self.rulesets):
+        if (self._rulesets) and (self._curr_ruleset not in self._rulesets):
             self.selected_ruleset = self.rulesets[0]
