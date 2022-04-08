@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -108,28 +108,28 @@
       <enum>Qt::ActionsContextMenu</enum>
      </property>
      <property name="title">
-      <string>Change conversion table</string>
+      <string>Change ruleset</string>
      </property>
      <addaction name="actionOpen_recent"/>
     </widget>
-    <widget class="QMenu" name="menuConvert_to">
+    <widget class="QMenu" name="menu_select_ruleset">
      <property name="title">
       <string>Convert to</string>
      </property>
     </widget>
-    <addaction name="menuConvert_to"/>
+    <addaction name="menu_select_ruleset"/>
     <addaction name="separator"/>
-    <addaction name="actionReload_conversion_table"/>
+    <addaction name="action_rel_ruleset"/>
     <addaction name="menuChange_conversion_table"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="action_exit"/>
    </widget>
    <addaction name="menuGeneral"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionReload_conversion_table">
+  <action name="action_rel_ruleset">
    <property name="text">
-    <string>Reload conversion table</string>
+    <string>Reload ruleset</string>
    </property>
    <property name="iconText">
     <string>Reload conversion table</string>
@@ -138,7 +138,7 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="action_exit">
    <property name="text">
     <string>Exit</string>
    </property>

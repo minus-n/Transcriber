@@ -38,8 +38,7 @@ class Transcriber(QObject):
             self.load_ruleset(ruleset)
 
         # select a ruleset by default
-        if self.rulesets:
-            self.selected_ruleset = self.rulesets[0]
+        self._select_valid_ruleset()
 
     def __call__(self) -> None:
         """Makes this object usable in a QThreadpool."""
@@ -81,6 +80,7 @@ class Transcriber(QObject):
         object. Doesn't check if the current ruleset is
         the one to load (=> reloading possible)"""
         self._rulesets = load_rules(ruleset_pth)
+        self._select_valid_ruleset()
 
     def request_transcr(self, text: str) -> None:
         """Schedules a transcription and cancels all pending ones."""
@@ -106,3 +106,9 @@ class Transcriber(QObject):
         # apply the currently selected ruleset to the given string
         ruleset = self._rulesets.sets[self._curr_ruleset]
         return parse_text(text, ruleset)
+
+    def _select_valid_ruleset(self):
+        # select a ruleset from self._rulesets
+        # (so no wrong one is selected)
+        if (self.rulesets) and (self._curr_ruleset not in self.rulesets):
+            self.selected_ruleset = self.rulesets[0]
