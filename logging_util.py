@@ -40,7 +40,6 @@ def _log_call_no_err(logger: logging.Logger, level, fn):
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         logger.log(level, 'call to %s', fn.__name__)
-        print(level, '-> call to', fn.__name__)
         return fn(*args, **kwargs)
     
     return wrapper
