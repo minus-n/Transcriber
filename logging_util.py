@@ -2,6 +2,8 @@ import functools
 import logging
 import pathlib
 
+DETAIL = 5
+logging.addLevelName(DETAIL, 'DETAIL')
 
 def get_file_logger(name: str, level: int|None=None):
     """Returns a logger that logs event to __file__/../logs/`log_file`.log ."""
