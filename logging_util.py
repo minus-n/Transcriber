@@ -4,7 +4,7 @@ import pathlib
 
 
 def get_file_logger(name: str, level: int|None=None):
-    """Returns a logger that logs event to __file__/logs/`log_file`.log ."""
+    """Returns a logger that logs event to __file__/../logs/`log_file`.log ."""
 
     logger = logging.getLogger(name)
     if level:
@@ -16,7 +16,7 @@ def get_file_logger(name: str, level: int|None=None):
         handler = logging.FileHandler(log_file, encoding='UTF-8')
         handler.setLevel(logging.DEBUG)
         handler.setFormatter(logging.Formatter(
-            fmt="[%(asctime)22s] %(levelname)8s: %(message)s",
+            fmt="[%(asctime)s] %(levelname)s: %(message)s",
         ))
 
         logger.addHandler(handler)
@@ -53,7 +53,7 @@ def _log_call_err(logger:logging.Logger, level, err_lvl, fn):
         logger.log(level, 'call to %s', fn.__name__)
         try:
             return fn(*args, **kwargs)
-        except Exception as err:
+        except Exception:
             logger.log(
                 err_lvl,
                 'an exception occured while calling %s',
@@ -69,4 +69,4 @@ def _log_file(name: str) -> pathlib.Path:
     curr_dir = pathlib.Path(__file__).parent
     file_name = name + '.log'
 
-    return curr_dir / file_name
+    return curr_dir / 'logs' / file_name
