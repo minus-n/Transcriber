@@ -44,7 +44,7 @@ class TranscribeWindow(QMainWindow):
         # load the ui from a .ui file
         curr_dir = Path(__file__).parent.resolve()
         ui_file = curr_dir / 'main.ui'
-        loadUi(ui_file.absolute(), self)
+        loadUi(ui_file.resolve(), self)
 
         # make sure necessary fields exist
         self.input_text: QPlainTextEdit
