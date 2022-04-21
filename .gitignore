@@ -1,6 +1,6 @@
 /.venv
 /meh
 /__pycache__
-/logs.log
 /ideas.md
 */__pycache__/
+/logs/
