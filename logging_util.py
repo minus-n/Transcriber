@@ -7,21 +7,20 @@ DETAIL = 5
 logging.addLevelName(DETAIL, 'DETAIL')
 
 def get_file_logger(name: str|None=None, level: int|None=None):
-    """Returns a logger that logs event to __file__/../logs/`log_file`.log ."""
+    """Returns a logger that logs event to a file associated with `name`
+    (or the caller if name is none) in __file__\..\logs ."""
+    
     if name is None:
         caller_info = inspect.stack()[1]
         caller_pth = pathlib.Path(caller_info.filename).resolve()
-        try:
-            rel_pth = caller_pth.relative_to(pathlib.Path(__file__).parent)
-        except ValueError:
-            rel_pth = caller_pth
         
-        log_file = str(_log_file('.'.join(rel_pth.parts)).resolve())
+        log_name, log_file = _log_dest(caller_pth)
     else:
-        log_file = str(_log_file(name).resolve())
+        log_name, log_file = _log_dest(name)
+    
+    print(log_file)
 
-
-    logger = logging.getLogger(name)
+    logger = logging.getLogger(log_name)
     if level:
         logger.setLevel(level)
 
@@ -81,9 +80,30 @@ def _log_call_err(logger:logging.Logger, level, err_lvl, fn):
 
     return wrapper
 
-def _log_file(name: str) -> pathlib.Path:
-    # returns a pathlib.Path to write the logging of `name` to
+def _log_dest(to: str|pathlib.Path) -> (pathlib.Path):
+    # returns a pathlib.Path to write the logging to
     curr_dir = pathlib.Path(__file__).parent
-    file_name = name + '.log'
 
-    return curr_dir / 'logs' / file_name
+    if isinstance(to, pathlib.Path):
+        try:
+            rel_pth = to.relative_to(pathlib.Path(__file__).parent)
+        except ValueError as err:
+            print('err:', err)
+            rel_pth = to
+        
+        name = rel_pth.name
+        if len(split_name := name.split('.')) > 1:
+            name = '.'.join(split_name[:-1])
+        
+        
+        if len(rel_pth.parts) >= 2:
+            _dir = '.'.join(rel_pth.parts[:-1])
+            file_name = _dir + '.' + name + '.log'
+        else:
+            file_name = name + '.log'
+
+        return file_name[:-4], str((curr_dir / 'logs' / file_name).resolve())
+
+    file_name = to + '.log'
+    return to, str((curr_dir / 'logs' / file_name).resolve())
+    
