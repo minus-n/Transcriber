@@ -1,12 +1,25 @@
 import functools
 import logging
 import pathlib
+import inspect
 
 DETAIL = 5
 logging.addLevelName(DETAIL, 'DETAIL')
 
-def get_file_logger(name: str, level: int|None=None):
+def get_file_logger(name: str|None=None, level: int|None=None):
     """Returns a logger that logs event to __file__/../logs/`log_file`.log ."""
+    if name is None:
+        caller_info = inspect.stack()[1]
+        caller_pth = pathlib.Path(caller_info.filename).resolve()
+        try:
+            rel_pth = caller_pth.relative_to(pathlib.Path(__file__).parent)
+        except ValueError:
+            rel_pth = caller_pth
+        
+        log_file = str(_log_file('.'.join(rel_pth.parts)).resolve())
+    else:
+        log_file = str(_log_file(name).resolve())
+
 
     logger = logging.getLogger(name)
     if level:
@@ -14,7 +27,6 @@ def get_file_logger(name: str, level: int|None=None):
 
     # the logger hasn't been initalized yet
     if not logger.handlers:
-        log_file = str(_log_file(name).resolve())
         handler = logging.FileHandler(log_file, encoding='UTF-8')
         handler.setLevel(logging.DEBUG)
         handler.setFormatter(logging.Formatter(
@@ -27,6 +39,10 @@ def get_file_logger(name: str, level: int|None=None):
 
 def log_call(logger: logging.Logger, level: int, log_errors: bool|int=False):
     """A wrapper to log calls to a function."""
+
+    caller_info = inspect.stack()[1]
+    
+
     if log_errors:
         err_lvl = log_errors if isinstance(log_errors, int) else logging.ERROR
         return functools.partial(
