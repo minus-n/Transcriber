@@ -41,7 +41,7 @@ def _log_call_no_err(logger: logging.Logger, level, fn):
     # returns a wrapper around `fn` that logs all calls to `fn`
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        logger.log(level, 'call to %s', fn.__name__)
+        logger.log(level, 'call to %s', fn.__qualname__)
         return fn(*args, **kwargs)
     
     return wrapper
@@ -51,14 +51,14 @@ def _log_call_err(logger:logging.Logger, level, err_lvl, fn):
     # calls to `fn` and all errors `fn` raises
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
-        logger.log(level, 'call to %s', fn.__name__)
+        logger.log(level, 'call to %s', fn.__qualname__)
         try:
             return fn(*args, **kwargs)
         except Exception:
             logger.log(
                 err_lvl,
                 'an exception occured while calling %s',
-                fn.__name__,
+                fn.__qualname__,
                 exc_info=True
             )
             raise
